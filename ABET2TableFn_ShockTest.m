@@ -27,9 +27,9 @@ function [data, ABETdata] = ABET2TableFn_ShockTest(filename)
 % (10)WSLScode: 2 if win+1; 4 if loss+1;
 [~,~,ABETdata]=xlsread(filename);
 
-Headers={'Trial','shock','shockIntensity'};
-data=table(zeros(25,1),zeros(25,1),zeros(25,1));
-data.Properties.VariableNames([1:3])=Headers;
+Headers={'Trial','shock','shockIntensity','TrialPossible'};
+data=table(zeros(25,1),zeros(25,1),zeros(25,1),zeros(25,1));
+data.Properties.VariableNames([1:4])=Headers;
 
 %%
 %add ABET data to table
@@ -57,7 +57,9 @@ for ii=startRow:rows
     
     
     data.Trial(trial)=trial;
-    
+    if regexp(ABETdata{ii,4},'TTL\w*')
+        data.TrialPossible(trial)=ABETdata{ii,1};
+    end
 
    
     %if there's a shock
