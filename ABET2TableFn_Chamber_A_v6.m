@@ -38,13 +38,16 @@ function [data, ABETdata, Descriptives, block_end, largeRewSide, smallRewSide] =
 % punishment ("loss")
 % (16)smallRew: total FREE CHOICE smallRew trials
 % (17)bigRew: total FREE CHOICE bigRew trials
+% (18)Blank_Touch: 1 for large screen touches, 2 for small screen touches.
+% filter on forced choice to get within-trial touches, anything else is by
+% default occuring during the ITI (when screens are blank!)
 
 [~,~,ABETdata]=xlsread(filename);
 
 Headers={'Trial','Block','ForceFree','bigSmall','RewSelection','TrialPossible','stTime','choiceTime'...
-    'collectionTime','shock','omission','omissionALL','WL','WSLScode','win_stay','lose_shift','lose_omit','lose_stay','smallRew','bigRew', 'Blank_ITI', 'Blank_Forced'};
-data=table(zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1), zeros(80,1), zeros(80,1), zeros(80,1), zeros(80,1));
-data.Properties.VariableNames([1:22])=Headers;
+    'collectionTime','shock','omission','omissionALL','WL','WSLScode','win_stay','lose_shift','lose_omit','lose_stay','smallRew','bigRew', 'Blank_Touch'};
+data=table(zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1),zeros(80,1), zeros(80,1), zeros(80,1), zeros(80,1));
+data.Properties.VariableNames([1:21])=Headers;
 
 %%
 %add ABET data to table
@@ -276,9 +279,9 @@ for ii=startRow:rows
         data.choiceTime(trial)=ABETdata{ii,1};
         blank_touch_str=lower(regexp(ABETdata{ii,4},'Blank','split'));
         if strcmp(blank_touch_str{1}, largeRewSide)
-            data.Blank_ITI(trial)=1; % large
+            data.Blank_Touch(trial)=1; % large
         elseif strcmp(blank_touch_str{1}, smallRewSide)
-            data.Blank_ITI(trial)=2; % small
+            data.Blank_Touch(trial)=2; % small
         end
         % if ismember(currentTrial, forced_trials)
         %     data.ForceFree(trial)=1;
@@ -295,9 +298,9 @@ for ii=startRow:rows
         data.choiceTime(trial)=ABETdata{ii,1};
         
         if strcmp(currentBlank, largeRewSide)
-            data.Blank_Forced(trial)=1; % large screen
+            data.Blank_Touch(trial)=1; % large screen
         elseif strcmp(currentBlank, smallRewSide)
-            data.Blank_Forced(trial)=2; % small screen
+            data.Blank_Touch(trial)=2; % small screen
         end
         % if ismember(currentTrial, forced_trials)
         %     data.ForceFree(trial)=1;
@@ -424,6 +427,14 @@ Descriptives.LoseStaytPercent = Descriptives.TotalLoseStay / Descriptives.TotalL
 Descriptives.B1_Collect_Lat = mean(collect_lat_b1);
 Descriptives.B2_Collect_Lat = mean(collect_lat_b2);
 Descriptives.B3_Collect_Lat = mean(collect_lat_b3);
+Descriptives.B1_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 1);
+Descriptives.B2_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 2);
+Descriptives.B3_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 3);
+Descriptives.B1_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 1);
+Descriptives.B2_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 2);
+Descriptives.B3_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 3);
+
+
 
 % uncomment first one if you want to write descriptive statistics to file
 %xlswrite(filename2,[TotalWins,TotalLosses,TotalWinStay,TotalLoseShift,WinStayPercent,LoseShiftPercent])

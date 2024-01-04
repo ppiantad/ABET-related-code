@@ -1,5 +1,5 @@
 function [data, trials, varargin] = TrialFilter(data,varargin);
-VALID_PARS = {'BLOCK','TYPE','SHK','REW','OMIT','OMITALL','ALL','WSLS','STTOCHO','WINSTAY','LOSESHIFT','LOSEOMIT', 'LOSESTAY', 'WIN', 'LOSS', 'AA', 'ITI_TOUCH', 'BLANK_FORCED'};
+VALID_PARS = {'BLOCK','TYPE','SHK','REW','OMIT','OMITALL','ALL','WSLS','STTOCHO','WINSTAY','LOSESHIFT','LOSEOMIT', 'LOSESTAY', 'WIN', 'LOSS', 'AA', 'BLANK_TOUCH'};
 %for varargin
 %JSFilter will assign the valid parameter equal to the argument that
 %immediately succeeds that paramter.  So, for example, if you call the
@@ -23,8 +23,8 @@ LOSESTAY=[];
 WIN=[]; % 1 = win
 LOSS=[]; % 3 = loss
 AA=[]; % 1 = large abort, 2 = small abort (changed 12/17/2021) (old {'large abort'}, {'small abort'})
-ITI_TOUCH =[]; %1 = large screen, 2 = small screen
-BLANK_FORCED=[]; % 1 = large, 2 = small
+BLANK_TOUCH =[]; %1 = large screen, 2 = small screen, anything from free-choice is by default an ITI blank touch. filter by forced/free also to separate these
+
 
 
 % parse varargin
@@ -127,16 +127,11 @@ for k=1:2:length(varargin)
 %             data=[];
     end
 
-    if strcmp(upper(varargin{k}),'ITI_TOUCH')
-        trials = table2cell(data([find(data.Blank_ITI==ITI_TOUCH)],1));
-        data([find(data.Blank_ITI~=ITI_TOUCH)],:)=[];
+    if strcmp(upper(varargin{k}),'BLANK_TOUCH')
+        trials = table2cell(data([find(data.Blank_Touch==BLANK_TOUCH)],1));
+        data([find(data.Blank_Touch~=BLANK_TOUCH)],:)=[];
     end   
-
-
-    if strcmp(upper(varargin{k}),'BLANK_FORCED')
-        trials = table2cell(data([find(data.Blank_Forced==BLANK_FORCED)],1));
-        data([find(data.Blank_Forced~=BLANK_FORCED)],:)=[];
-    end   
+ 
 
 end
 
