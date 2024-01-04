@@ -115,9 +115,13 @@ for k=1:2:length(varargin)
     end   
     
     if strcmp(upper(varargin{k}),'AA')
-        trials = table2cell(data([find(data.type_binary==AA)],1));
-        data([find(data.type_binary~=AA)],:)=[];
-        
+        try
+            trials = table2cell(data([find(data.type_binary==AA)],1));
+            data([find(data.type_binary~=AA)],:)=[];
+        catch
+            disp(['Invalid filter variable for this session, skipping']);
+            data=[];
+            trials = [];
 %         if strcmp('type',data.Properties.VariableNames(2)) == 1
 %             trials = ismember(data.type, AA);
 % %           trials = table2cell(data([find(data.type=={'AA'})],1));
@@ -125,13 +129,20 @@ for k=1:2:length(varargin)
 %         elseif strcmp('type',data.Properties.VariableNames(2)) == 0
 %             trials = [];
 %             data=[];
+        end
     end
 
     if strcmp(upper(varargin{k}),'BLANK_TOUCH')
-        trials = table2cell(data([find(data.Blank_Touch==BLANK_TOUCH)],1));
-        data([find(data.Blank_Touch~=BLANK_TOUCH)],:)=[];
-    end   
- 
+        try
+            trials = table2cell(data([find(data.Blank_Touch==BLANK_TOUCH)],1));
+            data([find(data.Blank_Touch~=BLANK_TOUCH)],:)=[];
+        catch
+            disp(['Invalid filter variable for this session, skipping']);
+            data=[];
+            trials = [];
+        end
+    end
+
 
 end
 
