@@ -1,5 +1,5 @@
 
-function [LargeRew,SmallRew,Shock,Omission, yyLarge, concat_all] = raster_RDT(fileName)
+function [LargeRew,SmallRew,Shock,Omission, system, yyLarge, concat_all] = raster_RDT(fileName)
 
 %read excel file
 [num,text,raw]=xlsread(fileName);
@@ -33,11 +33,12 @@ end
     
 
 %make vectors to store timestamps from trial types
-LargeRewInd=1;SmallRewInd=1;ShockInd=1;OmissionInd=1;
+LargeRewInd=1;SmallRewInd=1;ShockInd=1;OmissionInd=1;systemInd=1;
 LargeRew=[];
 SmallRew=[];
 Shock=[];
 Omission=[];
+system = [];
 
 for i=HeaderRow:len
     if raw{i,TimeCol}~=0
@@ -53,6 +54,9 @@ for i=HeaderRow:len
         elseif strcmp(raw{i,ItemCol},'forcedtrial_omission') || strcmp(raw{i,ItemCol},'freetrial_omission')
             Omission(OmissionInd)=raw{i,TimeCol};
             OmissionInd=OmissionInd+1;
+        elseif strcmp(raw{i,ItemCol},'(SYSTEM)')
+            system(systemInd)=raw{i,TimeCol};
+            systemInd=systemInd+1;
         end
     end
     
@@ -91,7 +95,7 @@ xlabel('Time, s')
 names = {'Omission';'Shock';'Small Reward';'Large Reward'};
 set(gca, 'xtick',[0:400:5400],'ytick', [1.5 3.5 5.5 7.5],'yticklabel',names)
 
-xlim([0 5400])
+xlim([0 system(end)])
 
 ylim([0.5 8.5])
 

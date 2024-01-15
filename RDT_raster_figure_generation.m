@@ -7,4 +7,4 @@
 figure
 % subplot(3,2,1)
 title('RDT Behavior')
-[LargeRew,SmallRew,Shock,Omission,yyLarge, concat_all] = raster_RDT('BLA-INSC-27 12302022 ABET.csv'); %early Disc
+[LargeRew,SmallRew,Shock,Omission, system, yyLarge, concat_all] = raster_RDT('BLA-INSC-27 01022023 ABET.csv'); %early Disc
