@@ -392,21 +392,75 @@ end
 collect_lat_b1 = [];
 collect_lat_b2 = [];
 collect_lat_b3 = [];
+
+collect_lat_b1_free = [];
+collect_lat_b2_free = [];
+collect_lat_b3_free = [];
+
+collect_lat_b1_forced = [];
+collect_lat_b2_forced = [];
+collect_lat_b3_forced = [];
 for ii = 1: numel(data.Trial)
     %ignore omissions (no collectionTime) and the occasion where mice
     %don't finish the final trial (which leads to a massive diff b/w
     %choiceTime and collectionTime
-    if data.omissionALL(ii)==0 && data.collectionTime(ii) ~= 0
+    if data.omissionALL(ii)==0 && data.collectionTime(ii) ~= 0 && data.Blank_Touch(ii) == 0
         if data.Block(ii)==1
             collect_lat_b1 = [collect_lat_b1, (data.collectionTime(ii) - data.choiceTime(ii))];
+            if data.ForceFree(ii)==0
+                collect_lat_b1_free = [collect_lat_b1_free, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.ForceFree(ii)==1
+                collect_lat_b1_forced = [collect_lat_b1_forced, (data.collectionTime(ii) - data.choiceTime(ii))];
+            end
         elseif data.Block(ii)==2
             collect_lat_b2 = [collect_lat_b2, (data.collectionTime(ii) - data.choiceTime(ii))];
+            if data.ForceFree(ii)==0
+                collect_lat_b2_free = [collect_lat_b2_free, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.ForceFree(ii)==1
+                collect_lat_b2_forced = [collect_lat_b2_forced, (data.collectionTime(ii) - data.choiceTime(ii))];
+            end
         elseif data.Block(ii)==3
             collect_lat_b3 = [collect_lat_b3, (data.collectionTime(ii) - data.choiceTime(ii))];
-    end
+            if data.ForceFree(ii)==0
+                collect_lat_b3_free = [collect_lat_b3_free, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.ForceFree(ii)==1
+                collect_lat_b3_forced = [collect_lat_b3_forced, (data.collectionTime(ii) - data.choiceTime(ii))];
+            end
+        end
     end
 end
 
+
+collect_lat_b1_large = [];
+collect_lat_b2_large = [];
+collect_lat_b3_large = [];
+
+collect_lat_b1_small = [];
+collect_lat_b2_small = [];
+collect_lat_b3_small = [];
+
+
+for ii = 1: numel(data.Trial)
+    if data.omissionALL(ii)==0 && data.collectionTime(ii) ~= 0 && data.Blank_Touch(ii) == 0
+        if data.bigSmall(ii) == 1.2
+            if data.Block(ii)==1
+                collect_lat_b1_large = [collect_lat_b1_large, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.Block(ii)==2
+                collect_lat_b2_large = [collect_lat_b2_large, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.Block(ii)==3
+                collect_lat_b3_large = [collect_lat_b3_large, (data.collectionTime(ii) - data.choiceTime(ii))];
+            end
+        elseif data.bigSmall(ii) == 0.3
+            if data.Block(ii)==1
+                collect_lat_b1_small = [collect_lat_b1_small, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.Block(ii)==2
+                collect_lat_b2_small = [collect_lat_b2_small, (data.collectionTime(ii) - data.choiceTime(ii))];
+            elseif data.Block(ii)==3
+                collect_lat_b3_small = [collect_lat_b3_small, (data.collectionTime(ii) - data.choiceTime(ii))];
+            end
+        end
+    end
+end
 
 block2_3_ind = data.Block(:)~=1;
 Descriptives = table;
@@ -427,12 +481,26 @@ Descriptives.LoseStaytPercent = Descriptives.TotalLoseStay / Descriptives.TotalL
 Descriptives.B1_Collect_Lat = mean(collect_lat_b1);
 Descriptives.B2_Collect_Lat = mean(collect_lat_b2);
 Descriptives.B3_Collect_Lat = mean(collect_lat_b3);
+Descriptives.B1_Collect_Lat_free = mean(collect_lat_b1_free);
+Descriptives.B2_Collect_Lat_free = mean(collect_lat_b2_free);
+Descriptives.B3_Collect_Lat_free = mean(collect_lat_b3_free);
+Descriptives.B1_Collect_Lat_forced = mean(collect_lat_b1_forced);
+Descriptives.B2_Collect_Lat_forced = mean(collect_lat_b2_forced);
+Descriptives.B3_Collect_Lat_forced = mean(collect_lat_b3_forced);
+Descriptives.B1_Collect_Lat_Large = mean(collect_lat_b1_large);
+Descriptives.B2_Collect_Lat_Large = mean(collect_lat_b2_large);
+Descriptives.B3_Collect_Lat_Large = mean(collect_lat_b3_large);
+Descriptives.B1_Collect_Lat_Small = mean(collect_lat_b1_small);
+Descriptives.B2_Collect_Lat_Small = mean(collect_lat_b2_small);
+Descriptives.B3_Collect_Lat_Small = mean(collect_lat_b3_small);
 Descriptives.B1_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 1);
 Descriptives.B2_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 2);
 Descriptives.B3_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 3);
 Descriptives.B1_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 1);
 Descriptives.B2_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 2);
 Descriptives.B3_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 3);
+
+
 
 
 
