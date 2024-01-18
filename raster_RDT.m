@@ -54,6 +54,7 @@ for i=HeaderRow:len
         elseif strcmp(raw{i,ItemCol},'forcedtrial_omission') || strcmp(raw{i,ItemCol},'freetrial_omission')
             Omission(OmissionInd)=raw{i,TimeCol};
             OmissionInd=OmissionInd+1;
+        % use 'SYSTEM' as a proxy for the end of the session
         elseif strcmp(raw{i,ItemCol},'(SYSTEM)')
             system(systemInd)=raw{i,TimeCol};
             systemInd=systemInd+1;
