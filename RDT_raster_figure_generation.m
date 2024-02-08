@@ -2,10 +2,19 @@
 % close all; clear all; clc
 
 
-[BehavData,ABETfile,Descriptives, block_end]=ABET2TableFn_Chamber_A_v6('BLA-INSC-27 01022023 ABET.csv',[]);
+[BehavData,ABETfile,Descriptives, block_end, largeRewSide, smallRewSide]=ABET2TableFn_Chamber_A_v6('BLA-INSC-27 01022023 ABET.csv',[]);
 SLEAP_data = readtable('BLA-Insc-27_RDT D1_body_sleap_data.csv');
 %EDIT FOR EACH MOUSE AS NECESSARY
 SLEAP_time_range_adjustment =  []; %16.2733; %15.3983; %[]; %-16.5448; %[]; %[]16.2733; 
+
+
+boris_file = 'BLA-Insc-27_RDT_D1 BORIS.csv'; %'BLA-Insc-27_RDT_D1.csv';
+
+
+
+
+[BehavData, boris_Extract_tbl] = boris_to_table(boris_file, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment);
+
 
 %make vectors to store timestamps from trial types
 LargeRewInd=1;SmallRewInd=1;ShockInd=1;OmissionInd=1;systemInd=1;
@@ -15,28 +24,40 @@ Shock=[];
 Omission=[];
 system = [];
 BlankTouches = [];
+AA_large = [];
+AA_small = [];
+
 
 LargeRew = BehavData.choiceTime(BehavData.bigSmall == 1.2)';
 SmallRew = BehavData.choiceTime(BehavData.bigSmall == 0.3)';
 Shock = BehavData.choiceTime(BehavData.shock == 1)';
 Omission = BehavData.choiceTime(BehavData.omissionALL == 1)';
 BlankTouches = BehavData.choiceTime(BehavData.Blank_Touch == 1 | BehavData.Blank_Touch == 2)';
-
+AA_large = BehavData.choiceTime(BehavData.type_binary == 1)';
+AA_small = BehavData.choiceTime(BehavData.type_binary == 2)';
 
 yyLarge=[ones(size(LargeRew));zeros(size(LargeRew))];
-yyLarge=yyLarge+ones(size(yyLarge))*9;
+yyLarge=yyLarge+ones(size(yyLarge))*13;
 
 yySmall=[ones(size(SmallRew));zeros(size(SmallRew))];
-yySmall=yySmall+ones(size(yySmall))*7;
+yySmall=yySmall+ones(size(yySmall))*11;
 
 yyShock=[ones(size(Shock));zeros(size(Shock))];
-yyShock=yyShock+ones(size(yyShock))*5;
+yyShock=yyShock+ones(size(yyShock))*9;
 
 yyOmission=[ones(size(Omission));zeros(size(Omission))];
-yyOmission=yyOmission+ones(size(yyOmission))*3;
+yyOmission=yyOmission+ones(size(yyOmission))*7;
 
 yyBlankTouches = [ones(size(BlankTouches));zeros(size(BlankTouches))];
-yyBlankTouches=yyBlankTouches+ones(size(BlankTouches));
+yyBlankTouches=yyBlankTouches+ones(size(BlankTouches))*5;
+
+yyAA_large= [ones(size(AA_large));zeros(size(AA_large))];
+yyAA_large=yyAA_large+ones(size(AA_large))*3;
+
+
+yyAA_small= [ones(size(AA_small));zeros(size(AA_small))];
+yyAA_small=yyAA_small+ones(size(AA_small));
+
 
 
 block_labels = [60 block_end];
@@ -87,29 +108,31 @@ plot([SmallRew;SmallRew],yySmall,'color',green);
 plot([Shock;Shock],yyShock,'color',red);
 plot([Omission;Omission],yyOmission,'color','k');
 plot([BlankTouches;BlankTouches],yyBlankTouches,'color', orange);
-yline([8.5 6.5 4.5 2.5],'color','k')
+plot([AA_large;AA_large],yyAA_large,'color','k');
+plot([AA_small;AA_small],yyAA_small,'color', orange);
+yline([12.5 10.5 8.5 6.5 4.5 2.5],'color','k')
 xline(block_labels,'-',{{'Block 1', 'Start'},{'Block 2', 'Start'},{'Block 3', 'Start'}})
 % Create patches for forced_trials_timestamps
 % Create patches for forced_trials_timestamps
 for i = 1:size(forced_trial_timestamps, 2)
     patch([forced_trial_timestamps(1, i), forced_trial_timestamps(1, i), forced_trial_timestamps(2, i), forced_trial_timestamps(2, i)], ...
-        [0.5, 12.5, 12.5, 0.5], gray, 'FaceAlpha', 0.3, 'EdgeColor', 'none');
+        [0.5, 15.5, 15.5, 0.5], gray, 'FaceAlpha', 0.3, 'EdgeColor', 'none');
 end
 
 for i = 1:size(free_trial_timestamps, 2)
     patch([free_trial_timestamps(1, i), free_trial_timestamps(1, i), free_trial_timestamps(2, i), free_trial_timestamps(2, i)], ...
-        [0.5, 12.5, 12.5, 0.5], green, 'FaceAlpha', 0.1, 'EdgeColor', 'none');
+        [0.5, 15.5, 15.5, 0.5], green, 'FaceAlpha', 0.1, 'EdgeColor', 'none');
 end
 
 
 xlabel('Time, s')
 
-names = {'Blank Touches'; 'Omission';'Shock';'Small Reward';'Large Reward'};
-set(gca, 'xtick',[0:400:5400],'ytick', [1.5 3.5 5.5 7.5 9.5],'yticklabel',names)
+names = {'Small Aborts'; 'Large Aborts'; 'Blank Touches'; 'Omission';'Shock';'Small Reward';'Large Reward'};
+set(gca, 'xtick',[0:400:5400],'ytick', [1.5 3.5 5.5 7.5 9.5 11.5 13.5],'yticklabel',names)
 
 xlim([0 BehavData.choiceTime(end)+100])
 
-ylim([0.5 12.5])
+ylim([0.5 15.5])
 
 
 

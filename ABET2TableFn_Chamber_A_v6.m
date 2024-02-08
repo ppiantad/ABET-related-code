@@ -325,59 +325,6 @@ data(max(data.Trial),:) = [];
 % if trial is the trial after a win, code=2;
 % if trial is a loss, code=3;
 % if trial is a trial after a loss, code=4;
-
-
-
-% choice_lat = [];
-for jj=1: numel(data.Trial)
-
-    if data.omission(jj)==0
-%         choice_lat(jj,:) = [choice_lat, data.collectionTime(jj) - data.choiceTime(jj)];
-        if data.bigSmall(jj)== 1.2 && data.ForceFree(jj)==0 %if data.bigSmall(jj)==1.2 && data.ForceFree(jj)==0
-            data.bigRew(jj)=1;
-            if data.shock(jj)==0
-                data.WL(jj)=1; %win
-            elseif data.shock(jj)==1
-                data.WL(jj)=3; %loss
-            end
-        end
-        if data.bigSmall(jj)== 0.3 && data.ForceFree(jj)==0 %if data.bigSmall(jj)==0.3 && data.ForceFree(jj)==0 % || data.bigSmall(jj)==0.5
-                   data.smallRew(jj)=1;       
-        end
-        if jj>1
-            if data.WL(jj-1)==1
-                data.WSLScode(jj)=2; %win+1 trial
-                if data.bigSmall(jj)== 1.2 && data.ForceFree(jj)==0 %if data.bigSmall(jj)==1.2 && data.ForceFree(jj)==0
-                    data.win_stay(jj)=1; %win_stay is 1 if chose big after a win
-                end
-                
-            elseif data.WL(jj-1)==3
-                data.WSLScode(jj)=4; %loss+1 trial
-               if data.bigSmall(jj) == 0.3 && data.ForceFree(jj)==0 %if data.bigSmall(jj)==0.3 && data.ForceFree(jj)==0
-                   data.lose_shift(jj)=1;
-               elseif data.bigSmall(jj) == 1.2 && data.ForceFree(jj)==0 %if data.bigSmall(jj)==0.3 && data.ForceFree(jj)==0
-                   data.lose_stay(jj)=1;
-               elseif data.omissionALL(jj)==1
-                   data.lose_omit(jj)=1;
-               end
-            
-            end
-        end
-        
-        
-    end
-
-
-
-
-% animalIDname = strsplit(filename);
-% TotalWins = sum(data.WL(:)==1);
-% TotalLosses = sum(data.WL(:)==3);
-% TotalWinStay = sum(data.win_stay(:)==1);
-% TotalLoseShift =sum(data.lose_shift(:)==1);
-% WinStayPercent = TotalWinStay / TotalWins;
-% LoseShiftPercent = TotalLoseShift / TotalLosses;
-end
 % added 10/21/2023    
 % Sometimes garbage columns get added at the end with no Trial #. Delete these columns 
 % Find the index of the first occurrence of 0 in the 'Trial' column
@@ -388,6 +335,52 @@ if ~isempty(zero_indices)
     % Remove the rows where 'Trial' is 0
     data(zero_indices, :) = [];
 end
+
+dummy_table_for_WSLS = data(data.ForceFree ~= 999,:);
+
+% choice_lat = [];
+for jj=1: numel(dummy_table_for_WSLS.Trial)
+
+    if dummy_table_for_WSLS.omission(jj)==0
+%         choice_lat(jj,:) = [choice_lat, data.collectionTime(jj) - data.choiceTime(jj)];
+        if dummy_table_for_WSLS.bigSmall(jj)== 1.2 && dummy_table_for_WSLS.ForceFree(jj)==0 %if data.bigSmall(jj)==1.2 && data.ForceFree(jj)==0
+            data.bigRew(dummy_table_for_WSLS.Trial(jj))=1;
+            if dummy_table_for_WSLS.shock(jj)==0
+                data.WL(dummy_table_for_WSLS.Trial(jj))=1; %win
+            elseif dummy_table_for_WSLS.shock(jj)==1
+                data.WL(dummy_table_for_WSLS.Trial(jj))=3; %loss
+            end
+        end
+        if dummy_table_for_WSLS.bigSmall(jj)== 0.3 && dummy_table_for_WSLS.ForceFree(jj)==0 %if data.bigSmall(jj)==0.3 && data.ForceFree(jj)==0 % || data.bigSmall(jj)==0.5
+                   data.smallRew(dummy_table_for_WSLS.Trial(jj))=1;       
+        end
+        if jj>1
+            if data.WL(dummy_table_for_WSLS.Trial(jj-1))==1
+                data.WSLScode(dummy_table_for_WSLS.Trial(jj))=2; %win+1 trial
+                if dummy_table_for_WSLS.bigSmall(jj)== 1.2 && dummy_table_for_WSLS.ForceFree(jj)==0 %if data.bigSmall(jj)==1.2 && data.ForceFree(jj)==0
+                    data.win_stay(dummy_table_for_WSLS.Trial(jj))=1; %win_stay is 1 if chose big after a win
+                end
+                
+            elseif data.WL(dummy_table_for_WSLS.Trial(jj-1))==3
+                data.WSLScode(dummy_table_for_WSLS.Trial(jj))=4; %loss+1 trial
+               if dummy_table_for_WSLS.bigSmall(jj) == 0.3 && dummy_table_for_WSLS.ForceFree(jj)==0 %if data.bigSmall(jj)==0.3 && data.ForceFree(jj)==0
+                   data.lose_shift(dummy_table_for_WSLS.Trial(jj))=1;
+               elseif dummy_table_for_WSLS.bigSmall(jj) == 1.2 && dummy_table_for_WSLS.ForceFree(jj)==0 %if data.bigSmall(jj)==0.3 && data.ForceFree(jj)==0
+                   data.lose_stay(dummy_table_for_WSLS.Trial(jj))=1;
+               elseif dummy_table_for_WSLS.omissionALL(jj)==1
+                   data.lose_omit(dummy_table_for_WSLS.Trial(jj))=1;
+               end
+            
+            end
+        end
+        
+        
+    end
+
+
+
+end
+
 
 collect_lat_b1 = [];
 collect_lat_b2 = [];
@@ -478,6 +471,37 @@ Descriptives.WinStayPercent = Descriptives.TotalWinStay / Descriptives.TotalWins
 Descriptives.LoseShiftPercent = Descriptives.TotalLoseShift / Descriptives.TotalLosses;
 Descriptives.LoseOmitPercent = Descriptives.TotalLoseOmit / Descriptives.TotalLosses;
 Descriptives.LoseStaytPercent = Descriptives.TotalLoseStay / Descriptives.TotalLosses;
+
+Descriptives.Block1_WinStay = sum(data.win_stay(data.Block(:)==1));
+Descriptives.Block1_LoseShift = sum(data.lose_shift(data.Block(:)==1));
+Descriptives.Block1_LoseOmit = sum(data.lose_omit(data.Block(:)==1));
+Descriptives.Block1_LoseStay = sum(data.lose_stay(data.Block(:)==1));
+
+Descriptives.Block2_WinStay = sum(data.win_stay(data.Block(:)==2));
+Descriptives.Block2_LoseShift = sum(data.lose_shift(data.Block(:)==2));
+Descriptives.Block2_LoseOmit = sum(data.lose_omit(data.Block(:)==2));
+Descriptives.Block2_LoseStay = sum(data.lose_stay(data.Block(:)==2));
+
+Descriptives.Block3_WinStay = sum(data.win_stay(data.Block(:)==3));
+Descriptives.Block3_LoseShift = sum(data.lose_shift(data.Block(:)==3));
+Descriptives.Block3_LoseOmit = sum(data.lose_omit(data.Block(:)==3));
+Descriptives.Block3_LoseStay = sum(data.lose_stay(data.Block(:)==3));
+
+Descriptives.Block1_WinStay_percent = sum(data.win_stay(data.Block(:)==1)) / Descriptives.TotalWins;
+Descriptives.Block1_LoseShift_percent = sum(data.lose_shift(data.Block(:)==1)) / Descriptives.TotalLosses;
+Descriptives.Block1_LoseOmit_percent = sum(data.lose_omit(data.Block(:)==1)) / Descriptives.TotalLosses;
+Descriptives.Block1_LoseStay_percent = sum(data.lose_stay(data.Block(:)==1)) / Descriptives.TotalLosses;
+
+Descriptives.Block2_WinStay_percent = sum(data.win_stay(data.Block(:)==2)) / Descriptives.TotalWins;
+Descriptives.Block2_LoseShift_percent = sum(data.lose_shift(data.Block(:)==2)) / Descriptives.TotalLosses;
+Descriptives.Block2_LoseOmit_percent = sum(data.lose_omit(data.Block(:)==2)) / Descriptives.TotalLosses;
+Descriptives.Block2_LoseStay_percent = sum(data.lose_stay(data.Block(:)==2)) / Descriptives.TotalLosses;
+
+Descriptives.Block3_WinStay_percent = sum(data.win_stay(data.Block(:)==3)) / Descriptives.TotalWins;
+Descriptives.Block3_LoseShift_percent = sum(data.lose_shift(data.Block(:)==3)) / Descriptives.TotalLosses;
+Descriptives.Block3_LoseOmit_percent = sum(data.lose_omit(data.Block(:)==3)) / Descriptives.TotalLosses;
+Descriptives.Block3_LoseStay_percent = sum(data.lose_stay(data.Block(:)==3)) / Descriptives.TotalLosses;
+
 Descriptives.B1_Collect_Lat = mean(collect_lat_b1);
 Descriptives.B2_Collect_Lat = mean(collect_lat_b2);
 Descriptives.B3_Collect_Lat = mean(collect_lat_b3);
