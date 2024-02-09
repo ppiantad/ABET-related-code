@@ -517,6 +517,7 @@ Descriptives.B3_Collect_Lat_Large = mean(collect_lat_b3_large);
 Descriptives.B1_Collect_Lat_Small = mean(collect_lat_b1_small);
 Descriptives.B2_Collect_Lat_Small = mean(collect_lat_b2_small);
 Descriptives.B3_Collect_Lat_Small = mean(collect_lat_b3_small);
+
 Descriptives.B1_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 1);
 Descriptives.B2_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 2);
 Descriptives.B3_Blank_Touch_Large = sum(data.Blank_Touch == 1 & data.Block == 3);
@@ -524,8 +525,19 @@ Descriptives.B1_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 1)
 Descriptives.B2_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 2);
 Descriptives.B3_Blank_Touch_Small = sum(data.Blank_Touch == 2 & data.Block == 3);
 
+Descriptives.B1_Blank_Touch_Large_forced = sum(data.Blank_Touch == 1 & data.Block == 1 & data.ForceFree == 1);
+Descriptives.B2_Blank_Touch_Large_forced = sum(data.Blank_Touch == 1 & data.Block == 2 & data.ForceFree == 1);
+Descriptives.B3_Blank_Touch_Large_forced = sum(data.Blank_Touch == 1 & data.Block == 3 & data.ForceFree == 1);
+Descriptives.B1_Blank_Touch_Small_forced = sum(data.Blank_Touch == 2 & data.Block == 1 & data.ForceFree == 1);
+Descriptives.B2_Blank_Touch_Small_forced = sum(data.Blank_Touch == 2 & data.Block == 2 & data.ForceFree == 1);
+Descriptives.B3_Blank_Touch_Small_forced = sum(data.Blank_Touch == 2 & data.Block == 3 & data.ForceFree == 1);
 
-
+Descriptives.B1_Blank_Touch_Large_free = sum(data.Blank_Touch == 1 & data.Block == 1 & data.ForceFree == 999);
+Descriptives.B2_Blank_Touch_Large_free = sum(data.Blank_Touch == 1 & data.Block == 2 & data.ForceFree == 999);
+Descriptives.B3_Blank_Touch_Large_free = sum(data.Blank_Touch == 1 & data.Block == 3 & data.ForceFree == 999);
+Descriptives.B1_Blank_Touch_Small_free = sum(data.Blank_Touch == 2 & data.Block == 1 & data.ForceFree == 999);
+Descriptives.B2_Blank_Touch_Small_free = sum(data.Blank_Touch == 2 & data.Block == 2 & data.ForceFree == 999);
+Descriptives.B3_Blank_Touch_Small_free = sum(data.Blank_Touch == 2 & data.Block == 3 & data.ForceFree == 999);
 
 
 % uncomment first one if you want to write descriptive statistics to file
