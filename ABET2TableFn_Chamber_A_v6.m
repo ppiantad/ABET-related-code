@@ -1,4 +1,4 @@
-function [data, ABETdata, Descriptives, block_end, largeRewSide, smallRewSide] = ABET2TableFn_Chamber_A_v6(filename, dummy)
+function [data, ABETdata, Descriptives, block_end, largeRewSide, smallRewSide, force_free_timestamps] = ABET2TableFn_Chamber_A_v6(filename, dummy)
 
 
 %ABET2Table creates a table with columns (outlined under "column headers"
@@ -61,6 +61,7 @@ tbl_size = [];
 currentLeftBlankCounter = 0;
 currentRightBlankCounter = 0;
 currentTrial = 0;
+force_free_counter = 0;
 
 forced_trials = [1:8, 31:38, 61:68];
 
@@ -119,6 +120,20 @@ for ii=startRow:rows
         blocks = blocks + 1;
     end
     
+
+    %forced_free_indices
+    if contains(ABETdata{ii,4}, 'Begin', 'IgnoreCase', true)
+        force_free_counter = force_free_counter + 1;
+        force_free_timestamps(force_free_counter, 1) = ABETdata{ii,1};
+        %force or free?
+        if contains(ABETdata{ii,4}, 'Free', 'IgnoreCase', true)
+            force_free_timestamps(force_free_counter, 2)=0;
+        elseif contains(ABETdata{ii,4}, 'Forced', 'IgnoreCase', true)
+            force_free_timestamps(force_free_counter, 2)=1;
+        end
+        
+    end
+
     %COLLECTION TIME
     %because I increment the trial based on feeder, add each
     %reward retrieved to the previous trial
