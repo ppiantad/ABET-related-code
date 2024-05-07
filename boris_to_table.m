@@ -1,8 +1,9 @@
-function [BehavData, boris_Extract_tbl] = boris_to_table(boris_file, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment)
+function [BehavData, boris_Extract_tbl] = boris_to_table(boris_file, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment, forced_trial_start, free_trial_start)
 %% boris_to_table: integrate approach/abort behaviors scored in BORIS directly into the organized ABET data table
 
 if isempty(boris_file)
     BehavData.type = NaN(size(BehavData,1), 1);
+    BehavData.type_binary = NaN(size(BehavData,1), 1);
     boris_Extract_tbl = [];
 elseif ~isempty(boris_file)
     [~,~,boris] = xlsread(boris_file);
@@ -46,6 +47,8 @@ elseif ~isempty(boris_file)
     boris_Extract_tbl.stTime = boris_Extract_tbl.choiceTime;
     boris_Extract_tbl.collectionTime = boris_Extract_tbl.choiceTime+30;
     
+
+
     % outerjoin(boris_Extract_tbl, BehavData);
     
     %block_end is from ABET2Table, and defines the time when a given block
@@ -64,8 +67,19 @@ elseif ~isempty(boris_file)
         
     end
     
+    for hh = 1:boris_rows
+        if (boris_Extract_tbl.choiceTime(hh) > forced_trial_start(1) && boris_Extract_tbl.choiceTime(hh) < free_trial_start(1)) ||  (boris_Extract_tbl.choiceTime(hh) > forced_trial_start(2) && boris_Extract_tbl.choiceTime(hh) < free_trial_start(2)) || (boris_Extract_tbl.choiceTime(hh) > forced_trial_start(3) && boris_Extract_tbl.choiceTime(hh) < free_trial_start(3))
+            boris_Extract_tbl.ForceFree(hh) = 1;
+        else
+            boris_Extract_tbl.ForceFree(hh) = 0;
+        end
+    end
+
+
+
+
     %add column titles to table
-    boris_Extract_tbl.Properties.VariableNames = {'choiceTime','type','stTime','collectionTime','Block'};
+    boris_Extract_tbl.Properties.VariableNames = {'choiceTime','type','stTime','collectionTime','Block', 'ForceFree'};
     
     %ABET2Table generates which side corresponded to Large and Small reward
     %for the mouse (largeRewSide and smallRewSide). Because BORIS coding is
@@ -92,7 +106,7 @@ elseif ~isempty(boris_file)
     boris_Extract_tbl = removevars(boris_Extract_tbl, {'type'});
     
 %     abet_and_boris = tblvertcat(boris_Extract_tbl, BehavData);
-    %the order of BehavData and brosi_extract_tbl matters here, keep in
+    %the order of BehavData and boris_extract_tbl matters here, keep in
     %this order to maintain the BehavData table orientation, appending the
     %row "type" and "type_binary" to the end
     abet_and_boris = tblvertcat(BehavData, boris_Extract_tbl);

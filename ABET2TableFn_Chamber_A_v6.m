@@ -1,4 +1,4 @@
-function [data, ABETdata, Descriptives, block_end, largeRewSide, smallRewSide, force_free_timestamps] = ABET2TableFn_Chamber_A_v6(filename, dummy)
+function [data, ABETdata, Descriptives, block_end, largeRewSide, smallRewSide, forced_trial_start, free_trial_start] = ABET2TableFn_Chamber_A_v6(filename, dummy)
 
 
 %ABET2Table creates a table with columns (outlined under "column headers"
@@ -469,6 +469,27 @@ for ii = 1: numel(data.Trial)
         end
     end
 end
+
+% Initialize arrays to store the first time values
+forced_trial_start = zeros(3, 1); % For strings of 1s
+free_trial_start = zeros(3, 1); % For strings of 0s
+
+% Loop through the data 
+for i = 1:size(force_free_timestamps, 1)
+    if i == 1
+        forced_trial_start(1) = force_free_timestamps(i, 1);
+    % Check if the current value in column 2 is different from the previous one
+    elseif i > 1 && force_free_timestamps(i, 2) ~= force_free_timestamps(i-1, 2)
+        if force_free_timestamps(i, 2) == 1
+            % Store the first time for string of 1s
+            forced_trial_start(sum(forced_trial_start ~= 0) + 1) = force_free_timestamps(i, 1);
+        else
+            % Store the first time for string of 0s
+            free_trial_start(sum(free_trial_start ~= 0) + 1) = force_free_timestamps(i, 1);
+        end
+    end
+end
+
 
 block2_3_ind = data.Block(:)~=1;
 Descriptives = table;

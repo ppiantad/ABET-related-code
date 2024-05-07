@@ -2,18 +2,18 @@
 % close all; clear all; clc
 
 
-[BehavData,ABETfile,Descriptives, block_end, largeRewSide, smallRewSide]=ABET2TableFn_Chamber_A_v6('BLA-INSC-27 01022023 ABET.csv',[]);
-SLEAP_data = readtable('BLA-Insc-27_RDT D1_body_sleap_data.csv');
+[BehavData,ABETfile,Descriptives, block_end, largeRewSide, smallRewSide, forced_trial_start, free_trial_start]=ABET2TableFn_Chamber_A_v6('BLA-INSC-27 12302022 ABET.csv',[]);
+SLEAP_data = readtable('BLA-Insc-27_Pre-RDT RM_body_sleap_data.csv');
 %EDIT FOR EACH MOUSE AS NECESSARY
 SLEAP_time_range_adjustment =  []; %16.2733; %15.3983; %[]; %-16.5448; %[]; %[]16.2733; 
 
 
-boris_file = 'BLA-Insc-27_RDT_D1 BORIS.csv'; %'BLA-Insc-27_RDT_D1.csv';
+boris_file = []; %'BLA-Insc-27_RDT_D1.csv';
 
 
 
 
-[BehavData, boris_Extract_tbl] = boris_to_table(boris_file, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment);
+[BehavData, boris_Extract_tbl] = boris_to_table(boris_file, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment, forced_trial_start, free_trial_start);
 
 
 %make vectors to store timestamps from trial types
@@ -33,9 +33,16 @@ SmallRew = BehavData.choiceTime(BehavData.bigSmall == 0.3)';
 Shock = BehavData.choiceTime(BehavData.shock == 1)';
 Omission = BehavData.choiceTime(BehavData.omissionALL == 1)';
 BlankTouches = BehavData.choiceTime(BehavData.Blank_Touch == 1 | BehavData.Blank_Touch == 2)';
-AA_large = BehavData.choiceTime(BehavData.type_binary == 1)';
-AA_small = BehavData.choiceTime(BehavData.type_binary == 2)';
 
+if any("type_binary" == string(BehavData.Properties.VariableNames))
+
+    AA_large = BehavData.choiceTime(BehavData.type_binary == 1)';
+    AA_small = BehavData.choiceTime(BehavData.type_binary == 2)';
+else
+    AA_large = zeros(1, size(BehavData.choiceTime, 1));
+    AA_small = zeros(1, size(BehavData.choiceTime, 1));
+
+end
 yyLarge=[ones(size(LargeRew));zeros(size(LargeRew))];
 yyLarge=yyLarge+ones(size(yyLarge))*13;
 
@@ -50,6 +57,8 @@ yyOmission=yyOmission+ones(size(yyOmission))*7;
 
 yyBlankTouches = [ones(size(BlankTouches));zeros(size(BlankTouches))];
 yyBlankTouches=yyBlankTouches+ones(size(BlankTouches))*5;
+
+
 
 yyAA_large= [ones(size(AA_large));zeros(size(AA_large))];
 yyAA_large=yyAA_large+ones(size(AA_large))*3;
@@ -70,7 +79,7 @@ free_trial_counts = 0
 forced_tmp = 1;
 free_tmp = 1;
 for zz = 1:size(BehavData, 1)
-    if BehavData.ForceFree(zz) == 1 & BehavData.bigSmall(zz) ~= 999
+    if BehavData.ForceFree(zz) == 1 & (BehavData.bigSmall(zz) ~= 999 & ~isnan(BehavData.bigSmall(zz)))
         forced_trial_counts = forced_trial_counts + 1;
         if forced_trial_counts == 1
             forced_trial_timestamps(1, forced_tmp) = BehavData.stTime(zz);
@@ -82,7 +91,7 @@ for zz = 1:size(BehavData, 1)
             forced_trial_counts = 0;
             forced_tmp = forced_tmp+1;
         end
-    elseif BehavData.ForceFree(zz) == 0 & BehavData.bigSmall(zz) ~= 999
+    elseif BehavData.ForceFree(zz) == 0 & (BehavData.bigSmall(zz) ~= 999 & ~isnan(BehavData.bigSmall(zz)))
         free_trial_counts = free_trial_counts + 1;
         if free_trial_counts == 1
             free_trial_timestamps(1, free_tmp) = BehavData.stTime(zz);
@@ -130,7 +139,8 @@ xlabel('Time, s')
 names = {'Small Aborts'; 'Large Aborts'; 'Blank Touches'; 'Omission';'Shock';'Small Reward';'Large Reward'};
 set(gca, 'xtick',[0:400:5400],'ytick', [1.5 3.5 5.5 7.5 9.5 11.5 13.5],'yticklabel',names)
 
-xlim([0 BehavData.choiceTime(end)+100])
+% xlim([0 BehavData.choiceTime(end)+100])
+xlim([0 4000])
 
 ylim([0.5 15.5])
 
