@@ -2,8 +2,8 @@
 % close all; clear all; clc
 
 
-[BehavData,ABETfile,Descriptives, block_end, largeRewSide, smallRewSide, forced_trial_start, free_trial_start]=ABET2TableFn_Chamber_A_v6('BLA-INSC-27 12302022 ABET.csv',[]);
-SLEAP_data = readtable('BLA-Insc-27_Pre-RDT RM_body_sleap_data.csv');
+[BehavData,ABETfile,Descriptives, block_end, largeRewSide, smallRewSide, forced_trial_start, free_trial_start]=ABET2TableFn_Chamber_A_v6('BLA-Insc-26 12162022 ABET.csv',[]);
+SLEAP_data = readtable('BLA-Insc-26_RM D1_body_sleap_data.csv');
 %EDIT FOR EACH MOUSE AS NECESSARY
 SLEAP_time_range_adjustment =  []; %16.2733; %15.3983; %[]; %-16.5448; %[]; %[]16.2733; 
 

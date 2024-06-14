@@ -1,5 +1,5 @@
 function [data, trials, varargin] = TrialFilter_test(data,varargin)
-  VALID_PARS = {'BLOCK','TYPE','SHK','REW','OMIT','OMITALL','ALL','WSLS','STTOCHO','WINSTAY','LOSESHIFT','LOSEOMIT', 'LOSESTAY', 'WIN', 'LOSS', 'AA', 'BLANK_TOUCH'};
+  VALID_PARS = {'BLOCK','TYPE','SHK','REW','OMIT','OMITALL','ALL','WSLS','STTOCHO','WINSTAY','LOSESHIFT','LOSEOMIT', 'LOSESTAY', 'WIN', 'LOSS', 'AA', 'BLANK_TOUCH', 'LOSS_PLUS_ONE'};
 
 
   % parse varargin
@@ -68,6 +68,8 @@ function [data, trials, varargin] = TrialFilter_test(data,varargin)
                     condition = condition | (data.type_binary == values{jj});
                 case 'BLANK_TOUCH'
                     condition = condition | (data.Blank_Touch == values{jj});
+                case 'LOSS_PLUS_ONE'
+                    condition = condition | (data.trial_after_shk == values{jj});
             end
         end
         combined_condition = any(condition, 2);
