@@ -5,7 +5,7 @@
 %subfolder 2: session(s)
 
 
-metaDirectory = 'D:\MATLAB\Sean CNMFe\BLA-NAcSh';
+metaDirectory = 'I:\MATLAB\raw data for WSLS etc\BLA hM4Di vs mCherry';
 metaDirectory_subfolders = dir(metaDirectory );
 metafolder_list = {};
 %SLEAP_adjustment comes from photometry where triggering was sometimes
@@ -89,8 +89,8 @@ for zz = 1:size(metafolder_list, 1)
         csvFiles = files(idx); %build a mat file index
         clear idx
         
-        
-        if size(csvFiles, 1) < 2
+        % some folders wont have BORIS files if AA has not been scored
+        if size(csvFiles, 1) < 1
             disp('Not enough .csv files, skipping folder');
         elseif size(csvFiles, 1) > 2 || contains(subfolderPath, 'hM4Di')
             for i = 1:size(csvFiles, 1)
