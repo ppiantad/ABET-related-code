@@ -5,7 +5,7 @@
 %subfolder 2: session(s)
 
 
-metaDirectory = 'I:\MATLAB\raw data for WSLS etc\BLA hM4Di vs mCherry';
+metaDirectory = 'I:\MATLAB\Sean CNMFe\pan-neuronal BLA';
 metaDirectory_subfolders = dir(metaDirectory );
 metafolder_list = {};
 %SLEAP_adjustment comes from photometry where triggering was sometimes
@@ -51,7 +51,10 @@ for zz = 1:size(metafolder_list, 1)
     for i = 1:length(subfolders)
         % Check if the item in subfolders is a directory (not "." or "..") or
         % one of the sets of files that I haven't analyzed yet (PR currently)
-        if subfolders(i).isdir && ~strcmp(subfolders(i).name, '.') && ~strcmp(subfolders(i).name, '..') && ~contains(subfolders(i).name, 'PR') && ~contains(subfolders(i).name, 'SHOCK')
+        %USE THIS LINE IF YOU WANT TO SPECIFY A SPECIFIC SESSION TO ANALYZE
+        %(CHECK LAST LINE!)
+        if subfolders(i).isdir && ~strcmp(subfolders(i).name, '.') && ~strcmp(subfolders(i).name, '..') && ~contains(subfolders(i).name, 'PR') && ~contains(subfolders(i).name, 'SHOCK') && contains(subfolders(i).name, 'Pre-RDT RM')
+        % if subfolders(i).isdir && ~strcmp(subfolders(i).name, '.') && ~strcmp(subfolders(i).name, '..') && ~contains(subfolders(i).name, 'PR') && ~contains(subfolders(i).name, 'SHOCK') && contains(subfolders(i).name, 'Pre_RDT_RM')
             % if subfolders(i).isdir && ~strcmp(subfolders(i).name, '.') && ~strcmp(subfolders(i).name, '..') && ~contains(lower(subfolders(i).name), 'shock')
             % if subfolders(i).isdir && ~strcmp(subfolders(i).name, '.') && ~strcmp(subfolders(i).name, '..')
             % Get the full path of the subfolder
@@ -92,7 +95,7 @@ for zz = 1:size(metafolder_list, 1)
         % some folders wont have BORIS files if AA has not been scored
         if size(csvFiles, 1) < 1
             disp('Not enough .csv files, skipping folder');
-        elseif size(csvFiles, 1) > 2 || contains(subfolderPath, 'hM4Di')
+        elseif size(csvFiles, 1) >= 2 
             for i = 1:size(csvFiles, 1)
                 % Check if "BORIS" is present in the current name
                 borisFound(i) = contains(csvFiles(i).name, 'BORIS');
