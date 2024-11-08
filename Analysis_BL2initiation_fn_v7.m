@@ -30,7 +30,7 @@ if which_sessions == '4'
    Descriptives = [];
 
 elseif which_sessions ~= '4'
-    [BehavData,ABETfile, Descriptives, block_end, largeRewSide, smallRewSide]=ABET2TableFn_Chamber_A_v6(behavFiles,[]); %ABET2TableFn_Chamber_Av3, updated to v6 as of 11/02/2021
+    [BehavData,ABETfile, Descriptives, block_end, largeRewSide, smallRewSide, forced_trial_start, free_trial_start]=ABET2TableFn_Chamber_A_v6(behavFiles,[]); %ABET2TableFn_Chamber_Av3, updated to v6 as of 11/02/2021
     timeStart=data.epocs.(TTLNumber{epoc1}).onset(1);
     timeShift=timeStart*ones(numel(BehavData.choiceTime(:)),1);
     BehavData.choiceTime(:)=BehavData.choiceTime(:)+timeShift;
@@ -62,7 +62,7 @@ end
 if which_sessions == '4'
 
 elseif which_sessions ~= '4'
-    [BehavData, boris_Extract_tbl] = boris_to_table(boris_files, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment);
+    [BehavData, boris_Extract_tbl] = boris_to_table(boris_files, BehavData, block_end, largeRewSide, smallRewSide, SLEAP_time_range_adjustment, forced_trial_start, free_trial_start);
 
 end
 
